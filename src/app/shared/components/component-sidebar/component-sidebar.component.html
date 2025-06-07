@@ -1,0 +1,46 @@
+<div class="sidebar">
+  <!-- Header (Logo y Usuario) -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <img
+        src="https://i.postimg.cc/667MGkZ0/Logo-Opti-Route-AI.png"
+        alt="Logo"
+        class="logo-img"
+      />
+    </div>
+
+    <div class="user-section">
+      <div class="user-avatar">
+        <img
+          src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png"
+          alt="Usuario"
+          class="avatar-img"
+        />
+      </div>
+      <p class="username">USUARIO</p>
+    </div>
+  </div>
+
+  <!-- Cuerpo (Navegación con botones) -->
+  <mat-nav-list>
+    <a mat-list-item routerLink="/home" routerLinkActive="active">
+      <mat-icon>home</mat-icon>
+      <span>INICIO</span>
+    </a>
+
+    <a mat-list-item routerLink="/configurations" routerLinkActive="active">
+      <mat-icon>settings</mat-icon>
+      <span>CONFIGURACIONES</span>
+    </a>
+
+    <a mat-list-item routerLink="/orders" routerLinkActive="active">
+      <mat-icon>work</mat-icon>
+      <span>PEDIDOS</span>
+    </a>
+
+    <a mat-list-item routerLink="/picking" routerLinkActive="active">
+      <mat-icon>check_circle</mat-icon>
+      <span>PICKING</span>
+    </a>
+  </mat-nav-list>
+</div>
