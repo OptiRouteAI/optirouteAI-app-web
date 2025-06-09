@@ -1,0 +1,25 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Order } from '../models/order.model';
+import { PickingResponse } from '../models/picking-response';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class OrderService {
+  private readonly API_URL = 'http://127.0.0.1:8000/purchase/purchase-order/';
+  private readonly PICKING_URL = 'http://127.0.0.1:8000/picking/picking/';
+
+  constructor(private http: HttpClient) {}
+
+  getOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(this.API_URL);
+  }
+
+  generatePicking(
+    pedidos: { nro_pedido: string }[]
+  ): Observable<PickingResponse> {
+    return this.http.post<PickingResponse>(this.PICKING_URL, { pedidos });
+  }
+}
