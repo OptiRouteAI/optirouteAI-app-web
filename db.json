@@ -1,0 +1,146 @@
+{
+  "orders": [
+    {
+      "nro_pedido": "K123",
+      "cliente": "angel",
+      "direccion": "almacen2",
+      "fecha_pedido": "2025-06-08",
+      "detalles": [
+        {
+          "cod_articulo": "xxxx",
+          "descripcion": "caja",
+          "cantidad": 2,
+          "UM": "CJ"
+        }
+      ]
+    },
+    {
+      "nro_pedido": "K223",
+      "cliente": "antonio",
+      "direccion": "almacen5",
+      "fecha_pedido": "2025-06-09",
+      "detalles": [
+        {
+          "cod_articulo": "string",
+          "descripcion": "string",
+          "cantidad": 2,
+          "UM": "CJ"
+        }
+      ]
+    },
+    {
+      "nro_pedido": "K312",
+      "cliente": "angel",
+      "direccion": "almacen4",
+      "fecha_pedido": "2025-06-08",
+      "detalles": [
+        {
+          "cod_articulo": "xxxx",
+          "descripcion": "caja",
+          "cantidad": 1,
+          "UM": "UND"
+        }
+      ]
+    },
+    {
+      "nro_pedido": "K410",
+      "cliente": "beatriz",
+      "direccion": "almacen1",
+      "fecha_pedido": "2025-06-07",
+      "detalles": [
+        {
+          "cod_articulo": "abc1",
+          "descripcion": "botella",
+          "cantidad": 6,
+          "UM": "UND"
+        }
+      ]
+    },
+    {
+      "nro_pedido": "K511",
+      "cliente": "carlos",
+      "direccion": "almacen3",
+      "fecha_pedido": "2025-06-09",
+      "detalles": [
+        {
+          "cod_articulo": "abc2",
+          "descripcion": "paquete",
+          "cantidad": 3,
+          "UM": "CJ"
+        }
+      ]
+    },
+    {
+      "nro_pedido": "K612",
+      "cliente": "daniela",
+      "direccion": "almacen6",
+      "fecha_pedido": "2025-06-10",
+      "detalles": [
+        {
+          "cod_articulo": "abc3",
+          "descripcion": "frasco",
+          "cantidad": 5,
+          "UM": "UND"
+        }
+      ]
+    }
+  ],
+  "pickings": [
+    {
+      "nro_picking": "PK00000001",
+      "fecha_generacion": "2025-06-08",
+      "estado": "PICKING COMPLETO",
+      "detalles": [
+        {
+          "cod_lpn": "ABC.XS.01",
+          "cantidad": 10,
+          "ubicacion": "A1",
+          "um": "CJ"
+        }
+      ],
+      "id": "e47f"
+    },
+    {
+      "nro_picking": "PK00000002",
+      "fecha_generacion": "2025-06-09",
+      "estado": "EN PROCESO",
+      "detalles": [
+        {
+          "cod_lpn": "ABC.XP.02",
+          "cantidad": 5,
+          "ubicacion": "B3",
+          "um": "CJ"
+        }
+      ],
+      "id": "6943"
+    },
+    {
+      "nro_picking": "PK00000003",
+      "fecha_generacion": "2025-06-10",
+      "estado": "EN PROCESO",
+      "detalles": [
+        {
+          "cod_lpn": "DEF.XS.02",
+          "cantidad": 4,
+          "ubicacion": "C2",
+          "um": "UND"
+        }
+      ],
+      "id": "8392"
+    },
+    {
+      "nro_picking": "PK00000004",
+      "fecha_generacion": "2025-06-11",
+      "estado": "PICKING COMPLETO",
+      "detalles": [
+        {
+          "cod_lpn": "GHI.ZY.05",
+          "cantidad": 12,
+          "ubicacion": "D4",
+          "um": "CJ"
+        }
+      ],
+      "id": "4902"
+    }
+  ]
+}

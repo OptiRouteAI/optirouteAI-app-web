@@ -1,0 +1,77 @@
+<div class="container">
+  <h3>CONSULTA DE PICKING</h3>
+
+  <div class="filters">
+    <mat-form-field appearance="fill">
+      <mat-label>Nro. Picking</mat-label>
+      <input matInput [(ngModel)]="filtroPicking" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="filtroFecha" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary">PICKING COMPLETO</button>
+  </div>
+
+  <table mat-table [dataSource]="filteredPickings" class="mat-elevation-z2">
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="toggleAllRows($event)"
+          [checked]="isAllSelected()"
+          [indeterminate]="isIndeterminate()"
+        ></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let p">
+        <mat-checkbox [(ngModel)]="selectionMap[p.nro_picking]"></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="icono">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let p">
+        <mat-icon>block</mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nroPicking">
+      <th mat-header-cell *matHeaderCellDef>Nro. Picking</th>
+      <td mat-cell *matCellDef="let p">{{ p.nro_picking }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let p">
+        {{
+          p.estado === "EP"
+            ? "EN PROCESO"
+            : p.estado === "PC"
+            ? "PICKING COMPLETO"
+            : p.estado
+        }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaGeneracion">
+      <th mat-header-cell *matHeaderCellDef>Fecha Generación</th>
+      <td mat-cell *matCellDef="let p">
+        {{ p.fecha_generacion | date : "dd/MM/yyyy" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rutas">
+      <th mat-header-cell *matHeaderCellDef>Rutas</th>
+      <td mat-cell *matCellDef="let p">
+        <button mat-button (click)="imprimir(p)">IMPRIMIR</button>
+        <mat-icon>print</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

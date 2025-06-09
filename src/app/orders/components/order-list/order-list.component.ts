@@ -13,7 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Order } from '../../models/order.model';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PickingResponse } from '../../models/picking-response';
+import { PickingService } from '../../../picking/services/picking.service';
+import { PickingResponse } from '../../../picking/models/picking-response';
 
 @Component({
   selector: 'app-order-list',
@@ -55,7 +56,11 @@ export class OrderListComponent {
 
   selectionMap: { [nroPedido: string]: boolean } = {};
 
-  constructor(private router: Router, private orderService: OrderService) {}
+  constructor(
+    private router: Router,
+    private orderService: OrderService,
+    private pickingService: PickingService
+  ) {}
 
   ngOnInit(): void {
     this.orderService.getOrders().subscribe((data: Order[]) => {
@@ -113,12 +118,10 @@ export class OrderListComponent {
       return;
     }
 
-    // ✅ Llamada al endpoint correcto: /picking/picking/
-    this.orderService.generatePicking(pedidosSeleccionados).subscribe({
+    this.pickingService.generatePicking(pedidosSeleccionados).subscribe({
       next: (response: PickingResponse) => {
         alert(`✅ Picking generado: ${response.nro_picking}`);
         console.log('Respuesta completa:', response);
-        // Opcional: limpiar selección
         this.selectionMap = {};
       },
       error: (error: HttpErrorResponse) => {
