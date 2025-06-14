@@ -75,6 +75,12 @@
   transition: background 0.2s;
 }
 
-.card-btn:hover {
+.card-btn[disabled], .card-btn.active {
+  background: #4caf50;
+  color: #fff;
+  cursor: default;
+}
+
+.card-btn:not([disabled]):hover {
   background: #a09a9a;
 }

@@ -1,25 +1,15 @@
 <div class="settings-container">
   <div class="settings-title">ESTRATEGIA DE PICKING</div>
   <div class="cards-wrapper">
-    <div class="picking-card">
-      <div class="card-title">PICKING CON IA</div>
+    <div class="picking-card" *ngFor="let estrategia of estrategias">
+      <div class="card-title">{{ estrategia.nombre }}</div>
       <div class="card-img">
-        <img src="https://cdn-icons-png.flaticon.com/512/4149/4149643.png" alt="IA" />
+        <img [src]="estrategia.cod_estrategia === 'PK_MOD' ? 'https://cdn-icons-png.flaticon.com/512/4149/4149643.png' : 'https://cdn-icons-png.flaticon.com/512/1832/1832506.png'" alt="{{ estrategia.nombre }}" />
       </div>
-      <div class="card-desc">
-        Optimiza los recorridos y reduce tiempos de picking utilizando algoritmos inteligentes. Ideal para almacenes con alta rotación.
-      </div>
-      <button class="card-btn">ACTIVAR</button>
-    </div>
-    <div class="picking-card">
-      <div class="card-title">PICKING TRADICIONAL</div>
-      <div class="card-img">
-        <img src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Tradicional" />
-      </div>
-      <div class="card-desc">
-        Sigue un proceso manual donde los productos se recogen siguiendo rutas fijas. Es ideal para almacenes con un volumen de pedidos más bajo o sin necesidad de optimización avanzada.
-      </div>
-      <button class="card-btn">ACTIVAR</button>
+      <div class="card-desc">{{ estrategia.descripcion }}</div>
+      <button class="card-btn" [class.active]="estrategia.flg_activo === 1" [disabled]="estrategia.flg_activo === 1" (click)="activarEstrategia(estrategia.cod_estrategia)">
+        {{ estrategia.flg_activo === 1 ? 'ACTIVO' : 'ACTIVAR' }}
+      </button>
     </div>
   </div>
 </div>
