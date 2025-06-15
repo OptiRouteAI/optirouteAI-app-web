@@ -8,16 +8,13 @@ import { PickingResumen } from '../models/picking.resumen';
   providedIn: 'root',
 })
 export class PickingService {
-  //private readonly PICKING_URL = 'http://127.0.0.1:8000/picking/picking/';
-
-  private readonly PICKING_URL = 'http://127.0.0.1:8000/pickings';
+  private readonly PICKING_URL = 'http://127.0.0.1:8000/picking/picking/';
 
   constructor(private http: HttpClient) {}
 
   /**
-   * POST /pickings
-   * Genera un nuevo picking a partir de pedidos seleccionados
-   * (No funcional con json-server a menos que lo configures)
+   * POST /picking/picking/
+   * Genera un picking a partir de pedidos seleccionados
    */
   generatePicking(
     pedidos: { nro_pedido: string }[]
@@ -26,10 +23,10 @@ export class PickingService {
   }
 
   /**
-   * GET /pickings
-   * Obtiene todos los pickings registrados (resumen)
+   * GET /picking/picking/
+   * Lista todos los pickings generados
    */
-  getPickings(): Observable<PickingResumen[]> {
-    return this.http.get<PickingResumen[]>(this.PICKING_URL);
+  getPickings(): Observable<PickingResponse[]> {
+    return this.http.get<PickingResponse[]>(this.PICKING_URL);
   }
 }
