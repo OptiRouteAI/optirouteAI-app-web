@@ -7,14 +7,13 @@ import { Order } from '../models/order.model';
   providedIn: 'root',
 })
 export class OrderService {
-  //private readonly API_URL = 'http://127.0.0.1:8000/purchase/purchase-order/';
-  private readonly API_URL = 'http://127.0.0.1:8000/orders';
+  private readonly API_URL = 'http://127.0.0.1:8000/purchase/purchase-order/';
 
   constructor(private http: HttpClient) {}
 
   /**
-   * GET /orders
-   * Obtiene la lista de órdenes desde el servidor mock
+   * GET /purchase/purchase-order/
+   * Obtiene la lista de pedidos desde el backend
    */
   getOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(this.API_URL);
