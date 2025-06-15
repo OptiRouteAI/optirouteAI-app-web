@@ -1,0 +1,31 @@
+<div class="login-container">
+  <div class="imagen-contenedor-centrado">
+  <img src="https://i.postimg.cc/667MGkZ0/Logo-Opti-Route-AI.png" alt="Descripción de la imagen" class="mi-imagen">
+</div>
+  <h4>INICIO DE SESION</h4>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">USUARIO:</label>
+      <input type="text" id="email" formControlName="email">
+      <div *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)" class="error-message">
+        <div *ngIf="f['email'].errors?.['required']">El usuario es requerido.</div>
+        <div *ngIf="f['email'].errors?.['pattern']">Por favor, introduce usuario valido.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">CONTRASEÑA:</label>
+      <input type="text" id="password" formControlName="password">
+      <div *ngIf="f['password'].invalid && (f['password'].dirty || f['password'].touched)" class="error-message">
+        <div *ngIf="f['password'].errors?.['required']">La contraseña es requerida.</div>
+        <div *ngIf="f['password'].errors?.['pattern']">La contraseña debe tener al menos 6 caracteres.</div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message server-error">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+  </form>
+</div>

@@ -1,5 +1,6 @@
-<app-component-sidebar></app-component-sidebar>
 <div class="main-content">
   <router-outlet></router-outlet>
-  <!-- Contenido dinámico de las rutas -->
+   <ng-container *ngIf="showAppLayout">
+  <app-component-sidebar></app-component-sidebar>
+  </ng-container>
 </div>
