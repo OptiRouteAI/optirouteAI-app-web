@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { PickingService } from '../../services/picking.service';
-import { PickingResumen } from '../../models/picking.resumen';
+import { PickingResponse } from '../../models/picking-response';
 
 interface Picking {
   nroPicking: string;
@@ -47,20 +47,44 @@ export class PickingListComponent {
     'rutas',
   ];
 
-  pickingData: PickingResumen[] = [];
+  pickingData: PickingResponse[] = [];
   filtroPicking = '';
   filtroFecha: Date | null = null;
   selectionMap: { [nro: string]: boolean } = {};
 
   constructor(private pickingService: PickingService) {}
 
-  ngOnInit(): void {
+  /*ngOnInit(): void {
     this.pickingService.getPickings().subscribe((data) => {
       this.pickingData = data;
     });
+  }*/
+  ngOnInit(): void {
+    this.pickingService.getPickings().subscribe((data) => {
+      this.pickingData = data.map((p) => ({
+        ...p,
+        detalles:
+          p.detalles && p.detalles.length > 0
+            ? p.detalles
+            : [
+                {
+                  cod_lpn: 'DEMO123',
+                  cantidad: 5,
+                  um: 'CJ',
+                  ubicacion: 'A1-B1',
+                },
+                {
+                  cod_lpn: 'DEMO456',
+                  cantidad: 8,
+                  um: 'CJ',
+                  ubicacion: 'C2-D4',
+                },
+              ],
+      }));
+    });
   }
 
-  get filteredPickings(): PickingResumen[] {
+  get filteredPickings(): PickingResponse[] {
     return this.pickingData.filter(
       (p) =>
         p.nro_picking
@@ -89,7 +113,7 @@ export class PickingListComponent {
     return count > 0 && count < this.filteredPickings.length;
   }
 
-  imprimir(picking: PickingResumen) {
+  /*imprimir(picking: PickingResponse) {
     const doc = new jsPDF();
 
     doc.setFontSize(14);
@@ -124,6 +148,48 @@ export class PickingListComponent {
 
     const finalY = (doc as any).lastAutoTable.finalY;
     const total = picking.detalles.reduce((sum, d) => sum + d.cantidad, 0);
+    doc.text(`Total: ${total}`, 180, finalY + 10, { align: 'right' });
+
+    doc.save(`picking-${picking.nro_picking}.pdf`);
+  }*/
+  imprimir(picking: PickingResponse) {
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text('CONSOLIDADO DE PICKING', 105, 20, { align: 'center' });
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Nro Picking', 'Fecha', 'Estado']],
+      body: [
+        [
+          picking.nro_picking,
+          picking.fecha_generacion,
+          picking.estado === 'EP'
+            ? 'EN PROCESO'
+            : picking.estado === 'PC'
+            ? 'PICKING COMPLETO'
+            : picking.estado,
+        ],
+      ],
+    });
+
+    const detalles =
+      picking.detalles && picking.detalles.length > 0
+        ? picking.detalles
+        : [
+            { cod_lpn: 'DEMO123', cantidad: 5, um: 'CJ', ubicacion: 'A1-B1' },
+            { cod_lpn: 'DEMO456', cantidad: 8, um: 'CJ', ubicacion: 'C2-D4' },
+          ];
+
+    autoTable(doc, {
+      startY: 50,
+      head: [['Código Artículo', 'Cantidad', 'UM', 'Ubicación']],
+      body: detalles.map((d) => [d.cod_lpn, d.cantidad, d.um, d.ubicacion]),
+    });
+
+    const finalY = (doc as any).lastAutoTable.finalY;
+    const total = detalles.reduce((sum, d) => sum + d.cantidad, 0);
     doc.text(`Total: ${total}`, 180, finalY + 10, { align: 'right' });
 
     doc.save(`picking-${picking.nro_picking}.pdf`);
