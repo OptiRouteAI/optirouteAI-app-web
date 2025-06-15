@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PickingResponse } from '../models/picking-response';
-import { PickingResumen } from '../models/picking.resumen';
 
 @Injectable({
   providedIn: 'root',
@@ -28,5 +27,14 @@ export class PickingService {
    */
   getPickings(): Observable<PickingResponse[]> {
     return this.http.get<PickingResponse[]>(this.PICKING_URL);
+  }
+
+  /**
+   * GET /picking/picking/ruta/{nro_picking}
+   * Obtiene las rutas asociadas a un picking generado
+   */
+  getPickingRoutes(nro_picking: string): Observable<any> {
+    const url = `http://127.0.0.1:8000/picking/picking/ruta/${nro_picking}`;
+    return this.http.get<any>(url);
   }
 }
