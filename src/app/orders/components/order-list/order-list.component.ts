@@ -35,6 +35,8 @@ import { PickingResponse } from '../../../picking/models/picking-response';
   styleUrl: './order-list.component.css',
 })
 export class OrderListComponent {
+  estrategiaActiva: string = 'PK_TRAD'; // Valor por defecto
+
   displayedColumns: string[] = [
     'select',
     'nroPedido',
@@ -63,6 +65,11 @@ export class OrderListComponent {
   ) {}
 
   ngOnInit(): void {
+    const estrategiaGuardada = localStorage.getItem('estrategiaActiva');
+    if (estrategiaGuardada) {
+      this.estrategiaActiva = estrategiaGuardada;
+    }
+
     this.orderService.getOrders().subscribe((data: Order[]) => {
       this.orders = data.map((o) => ({
         nroPedido: o.nro_pedido,
