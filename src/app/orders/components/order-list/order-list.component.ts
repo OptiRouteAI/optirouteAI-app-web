@@ -32,7 +32,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
-    OrderDetailDialogComponent,
     MatDialogModule,
     MatTableModule,
   ],

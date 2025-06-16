@@ -84,78 +84,73 @@ export class PickingListComponent {
     return count > 0 && count < this.filteredPickings.length;
   }
 
-  // Método para imprimir el picking y generar el PDF
   imprimir(picking: PickingResponse) {
     const doc = new jsPDF();
-
     doc.setFontSize(14);
     doc.text('CONSOLIDADO DE PICKING', 105, 20, { align: 'center' });
 
     this.pickingService.getPickingRoutes(picking.nro_picking).subscribe({
       next: (rutaResponse) => {
-        const rutas = rutaResponse.rutas;
+        const rutas: any[] = rutaResponse.rutas;
+        let currentY = 30;
 
-        autoTable(doc, {
-          startY: 30,
-          head: [['Nro Pedido', 'Cliente']],
-          body: rutas.map((ruta: Ruta) => [ruta.nro_pedido, ruta.cliente]),
-          columnStyles: {
-            0: { cellWidth: 40 },
-            1: { cellWidth: 50 },
-          },
-          styles: {
-            cellPadding: 5,
-            fontSize: 12,
-            halign: 'center',
-            valign: 'middle',
-          },
+        rutas.forEach((ruta: any) => {
+          doc.setFontSize(12);
+          doc.text(
+            `Pedido: ${ruta.nro_pedido}    Cliente: ${ruta.cliente}`,
+            15,
+            currentY
+          );
+          currentY += 8;
+
+          autoTable(doc, {
+            startY: currentY,
+            head: [
+              ['Código Artículo', 'Descripción', 'Cantidad', 'UM', 'Ubicación'],
+            ],
+            body: ruta.detalles.map((d: any) => [
+              d.cod_articulo,
+              d.descripcion,
+              d.cantidad,
+              d.um,
+              d.ubicacion,
+            ]),
+            columnStyles: {
+              0: { cellWidth: 30 },
+              1: { cellWidth: 60 },
+              2: { cellWidth: 30 },
+              3: { cellWidth: 20 },
+              4: { cellWidth: 50 },
+            },
+            headStyles: {
+              fillColor: [41, 128, 185],
+              textColor: 255,
+              halign: 'center',
+              fontStyle: 'bold',
+              fontSize: 11,
+            },
+            bodyStyles: {
+              halign: 'center',
+              fontSize: 10,
+            },
+            styles: {
+              cellPadding: 5,
+            },
+            didDrawPage: (data: any) => {
+              if (data.cursor) {
+                currentY = data.cursor.y + 10;
+              }
+            },
+          });
         });
 
-        const detalles = rutas.flatMap((ruta: Ruta) =>
-          ruta.detalles.map((d) => ({
-            cod_lpn: d.cod_articulo,
-            descripcion: d.descripcion,
-            cantidad: d.cantidad,
-            um: d.um,
-            ubicacion: d.ubicacion,
-          }))
-        );
+        // Total general
+        const total = rutas
+          .flatMap((r: any) => r.detalles)
+          .reduce((sum: number, d: any) => sum + d.cantidad, 0);
 
-        autoTable(doc, {
-          startY: 80, // Ajusta la posición vertical
-          head: [
-            ['Código Artículo', 'Descripción', 'Cantidad', 'UM', 'Ubicación'],
-          ],
-          body: detalles.map((d: any) => [
-            d.cod_lpn,
-            d.descripcion,
-            d.cantidad,
-            d.um,
-            d.ubicacion,
-          ]),
-          columnStyles: {
-            0: { cellWidth: 30 },
-            1: { cellWidth: 60 },
-            2: { cellWidth: 30 },
-            3: { cellWidth: 20 },
-            4: { cellWidth: 50 },
-          },
-
-          styles: {
-            cellPadding: 5,
-            fontSize: 12,
-            halign: 'center',
-            valign: 'middle',
-          },
-        });
-
-        const finalY = (doc as any).lastAutoTable.finalY;
-        const total = detalles.reduce(
-          (sum: number, d: any) => sum + d.cantidad,
-          0
-        );
-        doc.text(`Total: ${total}`, 180, finalY + 10, { align: 'right' });
-
+        doc.setFontSize(11);
+        doc.text(`Total general: ${total}`, 180, currentY, { align: 'right' });
         doc.save(`picking-${picking.nro_picking}.pdf`);
       },
       error: (error) => {
