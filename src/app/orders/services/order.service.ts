@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order } from '../models/order.model';
+import { Order, OrderDetail } from '../models/order.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,5 +17,10 @@ export class OrderService {
    */
   getOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(this.API_URL);
+  }
+
+  getOrderDetails(nroPedido: string): Observable<OrderDetail[]> {
+    const url = `${this.API_URL}${nroPedido}/details`; // URL con el nroPedido
+    return this.http.get<OrderDetail[]>(url);
   }
 }
