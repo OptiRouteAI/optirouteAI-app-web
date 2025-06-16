@@ -24,12 +24,7 @@
     </button>
   </div>
 
-  <table
-    mat-table
-    [dataSource]="filteredOrders"
-    class="mat-elevation-z2"
-    multiTemplateDataRows
-  >
+  <table mat-table [dataSource]="filteredOrders" class="mat-elevation-z2">
     <!-- Checkbox column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
@@ -50,7 +45,9 @@
     <!-- Nro Pedido -->
     <ng-container matColumnDef="nroPedido">
       <th mat-header-cell *matHeaderCellDef>Nro. Pedido</th>
-      <td mat-cell *matCellDef="let order">{{ order.nroPedido }}</td>
+      <td mat-cell *matCellDef="let order">
+        {{ order.nroPedido }}
+      </td>
     </ng-container>
 
     <!-- Cliente -->
@@ -70,6 +67,17 @@
       <th mat-header-cell *matHeaderCellDef>Fecha Pedido</th>
       <td mat-cell *matCellDef="let order">
         {{ order.fecha | date : "dd/MM/yyyy" }}
+      </td>
+    </ng-container>
+
+    <!-- Detalle de la orden como ícono de "3 rayas" -->
+    <ng-container matColumnDef="detalle">
+      <th mat-header-cell *matHeaderCellDef>Detalle</th>
+      <td mat-cell *matCellDef="let order">
+        <!-- Ícono de tres rayas (hamburguesa) para mostrar el detalle -->
+        <button mat-icon-button (click)="verDetalle(order.nroPedido)">
+          <mat-icon>menu</mat-icon>
+        </button>
       </td>
     </ng-container>
 
