@@ -1,13 +1,17 @@
-export interface PickingDetSalida {
-  cod_lpn: string;
-  cantidad: number;
-  ubicacion: string;
-  um: string;
-}
-
 export interface PickingResponse {
   nro_picking: string;
   fecha_generacion: string;
   estado: string;
-  detalles: PickingDetSalida[];
+}
+
+export interface Ruta {
+  nro_pedido: string;
+  cliente: string;
+  detalles: {
+    cod_articulo: string;
+    descripcion: string;
+    cantidad: number;
+    um: string;
+    ubicacion: string;
+  }[];
 }

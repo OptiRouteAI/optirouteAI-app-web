@@ -2,34 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PickingResponse } from '../models/picking-response';
-import { PickingResumen } from '../models/picking.resumen';
+import { UrlConfigService } from '../../services/url-config-service.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PickingService {
-  //private readonly PICKING_URL = 'http://127.0.0.1:8000/picking/picking/';
+  constructor(private http: HttpClient, private urlConfig: UrlConfigService) {}
 
-  private readonly PICKING_URL = 'http://127.0.0.1:8000/pickings';
-
-  constructor(private http: HttpClient) {}
-
-  /**
-   * POST /pickings
-   * Genera un nuevo picking a partir de pedidos seleccionados
-   * (No funcional con json-server a menos que lo configures)
-   */
   generatePicking(
     pedidos: { nro_pedido: string }[]
   ): Observable<PickingResponse> {
-    return this.http.post<PickingResponse>(this.PICKING_URL, { pedidos });
+    return this.http.post<PickingResponse>(this.urlConfig.PICKING_URL, {
+      pedidos,
+    });
   }
 
-  /**
-   * GET /pickings
-   * Obtiene todos los pickings registrados (resumen)
-   */
-  getPickings(): Observable<PickingResumen[]> {
-    return this.http.get<PickingResumen[]>(this.PICKING_URL);
+  getPickings(): Observable<PickingResponse[]> {
+    return this.http.get<PickingResponse[]>(this.urlConfig.PICKING_URL);
+  }
+
+  getPickingRoutes(nro_picking: string): Observable<any> {
+    const url = `${this.urlConfig.PICKING_ROUTE_URL}${nro_picking}`;
+    return this.http.get<any>(url);
   }
 }

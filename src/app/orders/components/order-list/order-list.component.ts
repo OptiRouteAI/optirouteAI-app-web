@@ -11,10 +11,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Order } from '../../models/order.model';
+import { Order, OrderDetail } from '../../models/order.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PickingService } from '../../../picking/services/picking.service';
 import { PickingResponse } from '../../../picking/models/picking-response';
+import { OrderDetailDialogComponent } from '../order-detail-dialog/order-detail-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-order-list',
@@ -30,13 +32,18 @@ import { PickingResponse } from '../../../picking/models/picking-response';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatTableModule,
   ],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.css',
 })
 export class OrderListComponent {
+  estrategiaActiva: string = 'PK_TRAD'; // Valor por defecto
+
   displayedColumns: string[] = [
     'select',
+    'detalle',
     'nroPedido',
     'cliente',
     'estado',
@@ -56,13 +63,21 @@ export class OrderListComponent {
 
   selectionMap: { [nroPedido: string]: boolean } = {};
 
+  orderDetails: OrderDetail[] = [];
+
   constructor(
     private router: Router,
     private orderService: OrderService,
-    private pickingService: PickingService
+    private pickingService: PickingService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
+    const estrategiaGuardada = localStorage.getItem('estrategiaActiva');
+    if (estrategiaGuardada) {
+      this.estrategiaActiva = estrategiaGuardada;
+    }
+
     this.orderService.getOrders().subscribe((data: Order[]) => {
       this.orders = data.map((o) => ({
         nroPedido: o.nro_pedido,
@@ -131,6 +146,22 @@ export class OrderListComponent {
           }`
         );
         console.error(error);
+      },
+    });
+  }
+
+  // Ver detalle del pedido
+  verDetalle(nroPedido: string): void {
+    this.orderService.getOrderDetails(nroPedido).subscribe({
+      next: (details) => {
+        // Abre el modal y pasa los detalles del pedido
+        this.dialog.open(OrderDetailDialogComponent, {
+          data: details, // Pasamos los detalles al modal
+        });
+      },
+      error: (error) => {
+        console.error('Error al obtener los detalles del pedido', error);
+        alert('❌ No se pudo obtener los detalles del pedido');
       },
     });
   }

@@ -12,16 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { PickingService } from '../../services/picking.service';
-import { PickingResumen } from '../../models/picking.resumen';
-
-interface Picking {
-  nroPicking: string;
-  estado: string;
-  fechaGeneracion: string;
-}
+import { PickingResponse, Ruta } from '../../models/picking-response';
 
 @Component({
   selector: 'app-picking-list',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -35,7 +30,7 @@ interface Picking {
     MatIconModule,
   ],
   templateUrl: './picking-list.component.html',
-  styleUrl: './picking-list.component.css',
+  styleUrls: ['./picking-list.component.css'],
 })
 export class PickingListComponent {
   displayedColumns: string[] = [
@@ -47,7 +42,7 @@ export class PickingListComponent {
     'rutas',
   ];
 
-  pickingData: PickingResumen[] = [];
+  pickingData: PickingResponse[] = [];
   filtroPicking = '';
   filtroFecha: Date | null = null;
   selectionMap: { [nro: string]: boolean } = {};
@@ -60,7 +55,7 @@ export class PickingListComponent {
     });
   }
 
-  get filteredPickings(): PickingResumen[] {
+  get filteredPickings(): PickingResponse[] {
     return this.pickingData.filter(
       (p) =>
         p.nro_picking
@@ -89,43 +84,79 @@ export class PickingListComponent {
     return count > 0 && count < this.filteredPickings.length;
   }
 
-  imprimir(picking: PickingResumen) {
+  imprimir(picking: PickingResponse) {
     const doc = new jsPDF();
-
     doc.setFontSize(14);
     doc.text('CONSOLIDADO DE PICKING', 105, 20, { align: 'center' });
 
-    autoTable(doc, {
-      startY: 30,
-      head: [['Nro Picking', 'Fecha', 'Estado']],
-      body: [
-        [
-          picking.nro_picking,
-          picking.fecha_generacion,
-          picking.estado === 'EP'
-            ? 'EN PROCESO'
-            : picking.estado === 'PC'
-            ? 'PICKING COMPLETO'
-            : picking.estado,
-        ],
-      ],
+    this.pickingService.getPickingRoutes(picking.nro_picking).subscribe({
+      next: (rutaResponse) => {
+        const rutas: any[] = rutaResponse.rutas;
+        let currentY = 30;
+
+        rutas.forEach((ruta: any) => {
+          doc.setFontSize(12);
+          doc.text(
+            `Pedido: ${ruta.nro_pedido}    Cliente: ${ruta.cliente}`,
+            15,
+            currentY
+          );
+          currentY += 8;
+
+          autoTable(doc, {
+            startY: currentY,
+            head: [
+              ['Código Artículo', 'Descripción', 'Cantidad', 'UM', 'Ubicación'],
+            ],
+            body: ruta.detalles.map((d: any) => [
+              d.cod_articulo,
+              d.descripcion,
+              d.cantidad,
+              d.um,
+              d.ubicacion,
+            ]),
+            columnStyles: {
+              0: { cellWidth: 30 },
+              1: { cellWidth: 60 },
+              2: { cellWidth: 30 },
+              3: { cellWidth: 20 },
+              4: { cellWidth: 50 },
+            },
+            headStyles: {
+              fillColor: [41, 128, 185],
+              textColor: 255,
+              halign: 'center',
+              fontStyle: 'bold',
+              fontSize: 11,
+            },
+            bodyStyles: {
+              halign: 'center',
+              fontSize: 10,
+            },
+            styles: {
+              cellPadding: 5,
+            },
+            didDrawPage: (data: any) => {
+              if (data.cursor) {
+                currentY = data.cursor.y + 10;
+              }
+            },
+          });
+        });
+
+        // Total general
+        const total = rutas
+          .flatMap((r: any) => r.detalles)
+          .reduce((sum: number, d: any) => sum + d.cantidad, 0);
+
+        doc.setFontSize(11);
+        doc.text(`Total general: ${total}`, 180, currentY, { align: 'right' });
+        doc.save(`picking-${picking.nro_picking}.pdf`);
+      },
+      error: (error) => {
+        alert('❌ Error al obtener las rutas del picking');
+        console.error(error);
+      },
     });
-
-    autoTable(doc, {
-      startY: 50,
-      head: [['Código Artículo', 'Cantidad', 'UM', 'Ubicación']],
-      body: picking.detalles.map((d) => [
-        d.cod_lpn,
-        d.cantidad,
-        d.um,
-        d.ubicacion,
-      ]),
-    });
-
-    const finalY = (doc as any).lastAutoTable.finalY;
-    const total = picking.detalles.reduce((sum, d) => sum + d.cantidad, 0);
-    doc.text(`Total: ${total}`, 180, finalY + 10, { align: 'right' });
-
-    doc.save(`picking-${picking.nro_picking}.pdf`);
   }
 }

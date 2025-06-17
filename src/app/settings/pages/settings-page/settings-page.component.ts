@@ -15,7 +15,7 @@ interface Estrategia {
   standalone: true,
   imports: [CommonModule, HttpClientModule],
   templateUrl: './settings-page.component.html',
-  styleUrls: ['./settings-page.component.css']
+  styleUrls: ['./settings-page.component.css'],
 })
 export class SettingsPageComponent implements OnInit {
   estrategias: Estrategia[] = [];
@@ -30,7 +30,10 @@ export class SettingsPageComponent implements OnInit {
 
   activarEstrategia(cod: string) {
     this.configService.setConfiguration(cod, {}).subscribe(() => {
-      // Al cambiar la estrategia, recargar la lista para reflejar el cambio
+      // Guardar en localStorage
+      localStorage.setItem('estrategiaActiva', cod);
+
+      // Recargar visualmente
       this.configService.getConfigurations().subscribe((data: Estrategia[]) => {
         this.estrategias = data;
       });
