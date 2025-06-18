@@ -26,4 +26,12 @@ export class PickingService {
     const url = `${this.urlConfig.PICKING_ROUTE_URL}${nro_picking}`;
     return this.http.get<any>(url);
   }
+
+  cancelPicking(nro_picking: string): Observable<any> {
+    const url = this.urlConfig.CANCEL_PICKING_URL.replace(
+      '{nro_picking}',
+      nro_picking
+    );
+    return this.http.put<any>(url, {});
+  }
 }
