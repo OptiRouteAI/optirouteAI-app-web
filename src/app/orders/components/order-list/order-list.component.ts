@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { OrderService } from '../../services/order.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Order, OrderDetail } from '../../models/order.model';
+import { Order } from '../../models/order.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PickingService } from '../../../picking/services/picking.service';
 import { PickingResponse } from '../../../picking/models/picking-response';
@@ -38,8 +37,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.css',
 })
-export class OrderListComponent {
-  estrategiaActiva: string = 'PK_TRAD'; // Valor por defecto
+export class OrderListComponent implements OnInit {
+  estrategiaActiva: string = 'PK_TRAD';
 
   displayedColumns: string[] = [
     'select',
@@ -63,10 +62,8 @@ export class OrderListComponent {
 
   selectionMap: { [nroPedido: string]: boolean } = {};
 
-  orderDetails: OrderDetail[] = [];
 
   constructor(
-    private router: Router,
     private orderService: OrderService,
     private pickingService: PickingService,
     private dialog: MatDialog
@@ -82,9 +79,19 @@ export class OrderListComponent {
       this.orders = data.map((o) => ({
         nroPedido: o.nro_pedido,
         cliente: o.cliente,
-        estado: 'PENDIENTE',
+        estado: '...',
         fecha: o.fecha_pedido,
       }));
+
+
+      this.orderService.getOrdersWithState().subscribe((statusData) => {
+        statusData.forEach((status) => {
+          const order = this.orders.find(o => o.nroPedido === status.nro_pedido);
+          if (order) {
+            order.estado = status.estado;
+          }
+        });
+      });
     });
   }
 
@@ -150,13 +157,11 @@ export class OrderListComponent {
     });
   }
 
-  // Ver detalle del pedido
   verDetalle(nroPedido: string): void {
     this.orderService.getOrderDetails(nroPedido).subscribe({
       next: (details) => {
-        // Abre el modal y pasa los detalles del pedido
         this.dialog.open(OrderDetailDialogComponent, {
-          data: details, // Pasamos los detalles al modal
+          data: details,
         });
       },
       error: (error) => {
