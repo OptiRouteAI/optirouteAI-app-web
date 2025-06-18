@@ -10,5 +10,6 @@ export interface Order {
   cliente: string;
   direccion: string;
   fecha_pedido: string;
+  estado: string;
   detalles: OrderDetail[];
 }
