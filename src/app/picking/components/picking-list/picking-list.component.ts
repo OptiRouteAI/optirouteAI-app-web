@@ -55,6 +55,26 @@ export class PickingListComponent {
     });
   }
 
+  eliminarPicking(nroPicking: string): void {
+    if (confirm('¿Estás seguro de que deseas cancelar este picking?')) {
+      this.pickingService.cancelPicking(nroPicking).subscribe({
+        next: () => {
+          alert('Picking cancelado con éxito.');
+          // Actualizamos el estado del picking sin eliminarlo de la lista
+          const picking = this.pickingData.find(p => p.nro_picking === nroPicking);
+          if (picking) {
+            picking.estado = 'CANCELADO'; // Cambiar el estado a 'CANCELADO'
+          }
+        },
+        error: (error) => {
+          alert('❌ Error al cancelar el picking');
+          console.error(error);
+        },
+      });
+    }
+  }
+
+
   get filteredPickings(): PickingResponse[] {
     return this.pickingData.filter(
       (p) =>
