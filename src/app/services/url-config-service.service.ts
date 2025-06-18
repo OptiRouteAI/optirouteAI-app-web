@@ -16,5 +16,7 @@ export class UrlConfigService {
 
   public readonly ORDER_STATUS_URL = `${this.BASE_URL}/purchase/purchase-order/filtrar`;
 
+  public readonly CANCEL_PICKING_URL = `${this.BASE_URL}/picking/picking/{nro_picking}/cancelar`;
+
   constructor() {}
 }
