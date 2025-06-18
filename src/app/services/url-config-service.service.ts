@@ -14,5 +14,7 @@ export class UrlConfigService {
 
   public readonly CONFIGURATION_URL = `${this.BASE_URL}/configuration/configuration/configuracion/`;
 
+  public readonly ORDER_STATUS_URL = `${this.BASE_URL}/purchase/purchase-order/filtrar`;
+
   constructor() {}
 }
